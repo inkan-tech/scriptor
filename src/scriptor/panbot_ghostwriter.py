@@ -146,12 +146,14 @@ class Ghostwriter:
 
         if self.llm_provider == "claude":
             response = self.client.messages.create(
-                model=os.environ.get("PANBOT_MODEL", "claude-sonnet-4-5-20250929"),
+                model=os.environ.get("PANBOT_MODEL", "claude-sonnet-5-5"),
                 max_tokens=8192,
+                output_config={"effort": "medium"},
                 system=system_prompt,
                 messages=[{"role": "user", "content": edit_prompt}],
             )
-            text = response.content[0].text
+            # Read by block type: a thinking block may come first
+            text = "".join(b.text for b in response.content if b.type == "text")
         elif self.llm_provider == "groq":
             response = self.client.chat.completions.create(
                 model=os.environ.get("PANBOT_MODEL", "meta-llama/llama-4-scout-17b-16e-instruct"),

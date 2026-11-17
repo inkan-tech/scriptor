@@ -43,7 +43,7 @@ ocr = [
     "cairosvg>=2.9.0",
 ]
 ai = [
-    "anthropic>=0.18.0",
+    "anthropic>=2.8.0",
     "groq>=0.4.0",
     "httpx>=0.27.0",
 ]
