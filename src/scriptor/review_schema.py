@@ -177,7 +177,7 @@ class ReviewConfig(BaseModel):
     )
 
     # OCR-specific settings
-    claude_model: str = Field("claude-sonnet-4-5-20250929", description="Claude model for vision OCR")
+    claude_model: str = Field("claude-sonnet-5-5", description="Claude model for vision OCR")
     groq_model: str = Field("meta-llama/llama-4-scout-17b-16e-instruct", description="GROQ model for vision OCR")
 
     # Image processing

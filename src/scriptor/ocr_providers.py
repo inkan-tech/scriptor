@@ -70,7 +70,7 @@ def classify_annotation_type(text: str) -> str:
 def ocr_with_claude(
     image_path: Path,
     api_key: Optional[str] = None,
-    model: str = "claude-sonnet-4-5-20250929"
+    model: str = "claude-sonnet-5-5"
 ) -> Tuple[str, float]:
     """
     Extract text from handwritten annotation using Claude vision API.
@@ -107,6 +107,7 @@ def ocr_with_claude(
     message = client.messages.create(
         model=model,
         max_tokens=2048,  # Increased for longer handwritten notes
+        output_config={"effort": "low"},  # Simple transcription: keep thinking short
         messages=[
             {
                 "role": "user",
@@ -140,7 +141,8 @@ Begin extraction now:"""
     )
 
     # Extract response
-    extracted_text = message.content[0].text.strip()
+    # Read by block type: a thinking block may come first
+    extracted_text = "".join(b.text for b in message.content if b.type == "text").strip()
 
     # Calculate confidence based on response characteristics
     confidence = 0.9  # Claude generally high confidence
@@ -463,7 +465,7 @@ def process_annotation_with_ocr(
     # Perform OCR
     if ocr_provider.lower() == "claude":
         api_key = config.get("claude_api_key") or os.getenv("ANTHROPIC_API_KEY")
-        model = config.get("claude_model", "claude-sonnet-4-5-20250929")
+        model = config.get("claude_model", "claude-sonnet-5-5")
         extracted_text, confidence = ocr_with_claude(image_path, api_key, model)
     elif ocr_provider.lower() == "groq":
         api_key = config.get("groq_api_key") or os.getenv("GROQ_API_KEY")
